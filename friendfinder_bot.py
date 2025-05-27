@@ -48,12 +48,14 @@ async def init_supabase():
     if not url or not key:
         raise ValueError("Missing Supabase credentials in .env file")
     
-    # Initialize Supabase with proper options
-    options = {
-        'auth_client': True,
-        'schema': 'public'
+    # Initialize Supabase with proper headers
+    headers = {
+        'apikey': key,
+        'Authorization': f'Bearer {key}'
     }
-    bot.supabase = create_client(url, key, options)
+    
+    # Initialize Supabase with headers
+    bot.supabase = create_client(url, key, headers=headers)
     
     # Create table if it doesn't exist
     try:
