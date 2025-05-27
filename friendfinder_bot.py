@@ -48,35 +48,15 @@ async def init_supabase():
     if not url or not key:
         raise ValueError("Missing Supabase credentials in .env file")
     
-    # Initialize Supabase with proper headers
-    headers = {
-        'apikey': key,
-        'Authorization': f'Bearer {key}'
-    }
-    
-    # Initialize Supabase with headers
-    bot.supabase = create_client(url, key, headers=headers)
-    
-    # Create table if it doesn't exist
+    # Initialize Supabase client (no headers/options needed)
+    bot.supabase = create_client(url, key)
+
+    # Optionally, check if the table exists (will error if not, but that's fine for dev)
     try:
-        # Check if table exists
         bot.supabase.table('users').select("*").execute()
         print("Table exists")
     except Exception as e:
-        print(f"Creating table: {e}")
-        # Create table with proper UUID type
-        bot.supabase.table('users').insert([
-            {
-                "id": "uuid_generate_v4()",
-                "name": "name",
-                "age_group": "age_group",
-                "hobbies": "hobbies",
-                "bio": "bio",
-                "likes": "likes",
-                "dislikes": "dislikes",
-                "created_at": "created_at"
-            }
-        ]).execute()
+        print(f"Table check error (this is normal if the table doesn't exist): {e}")
 
 # Register command
 @bot.tree.command(name="register")
